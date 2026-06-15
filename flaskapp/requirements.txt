@@ -1,0 +1,16 @@
+APScheduler==3.11.2
+dnspython==2.8.0
+fastapi==0.133.0
+firebase_admin==7.1.0
+prometheus-client==0.22.1
+pydantic==2.12.5
+python-dotenv==1.2.2
+uvicorn==0.41.0
+wrapt==2.1.1
+motor==3.5.1
+pymongo==4.8.0
+
+
+spacy==3.7.2
+
+pytest==9.0.3
