@@ -27,8 +27,8 @@ jobs:
         run: pip install ruff
 
       - name: Run Ruff checks
-        run: ruff check backend/
-        # Checks all .py files in backend/ for style and syntax issues.
+        run: ruff check flaskapp/
+        # Checks all .py files in flaskapp/ for style and syntax issues.
     
 # # ── JOB 2: Tests ─────────────────────────────────────────────────────
   tests:
@@ -48,11 +48,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r backend/requirements.txt
+          pip install -r flaskapp/requirements.txt
           pip install pytest pytest-cov
 
       - name: Run tests with coverage
-        run: pytest backend --cov=backend -v --cov-report=term --cov-report=xml
+        run: pytest flaskapp --cov=flaskapp -v --cov-report=term --cov-report=xml
         env:
           PYTHONPATH: .
           MONGO_URI: ${{ secrets.MONGO_URI }}
@@ -61,7 +61,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          files: backend/coverage.xml
+          files: flaskapp/coverage.xml
           flags: unittests
           name: coverage-report
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -83,10 +83,10 @@ jobs:
       - name: Install Bandit
         run: pip install bandit[toml]
       - name: Run Bandit security scan
-        run: bandit -r backend/ -x backend/tests --severity-level medium -f json -o bandit-report.json || true
+        run: bandit -r flaskapp/ -x flaskapp/tests --severity-level medium -f json -o bandit-report.json || true
 
       - name: Show Bandit summary
-        run: bandit -r backend/ -x backend/tests --severity-level medium || true
+        run: bandit -r flaskapp/ -x flaskapp/tests --severity-level medium || true
 
       - name: Upload Bandit report
         uses: actions/upload-artifact@v4
@@ -112,10 +112,10 @@ jobs:
         run: pip install pip-audit
 
       - name: Run pip-audit
-        run: pip-audit -r backend/requirements.txt -f json -o pip-audit-report.json || true
+        run: pip-audit -r flaskapp/requirements.txt -f json -o pip-audit-report.json || true
 
       - name: Show pip-audit summary
-        run: pip-audit -r backend/requirements.txt || true
+        run: pip-audit -r flaskapp/requirements.txt || true
 
       - name: Upload pip-audit report
         uses: actions/upload-artifact@v4
@@ -145,13 +145,13 @@ jobs:
           context: .
           file: ./Dockerfile
           push: false
-          tags: memoryjar-backend:${{ github.sha }}
+          tags: memoryjar-flaskapp:${{ github.sha }}
           load: true
 
       - name: Run Trivy scan (SARIF)
         uses: aquasecurity/trivy-action@v0.20.0
         with:
-          image-ref: memoryjar-backend:${{ github.sha }}
+          image-ref: memoryjar-flaskapp:${{ github.sha }}
           format: sarif
           output: trivy-results.sarif
           severity: CRITICAL,HIGH

@@ -1,13 +1,13 @@
-# Digital Memory Jar - Backend
+# Digital Memory Jar - flaskapp
 
-FastAPI-powered backend for the Digital Memory Jar platform. Handles authentication, memory management, AI analysis, and NLP processing.
+FastAPI-powered flaskapp for the Digital Memory Jar platform. Handles authentication, memory management, AI analysis, and NLP processing.
 
 ## Quick Start
 
 ### Setup
 
 ```bash
-cd backend
+cd flaskapp
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -160,7 +160,7 @@ Semantic embeddings for memory similarity and search.
 ## Project Structure
 
 ```
-backend/
+flaskapp/
 ├── main.py                 # FastAPI app entry point
 ├── auth_deps.py           # Firebase authentication middleware
 ├── connection.py          # MongoDB connection management
@@ -179,7 +179,7 @@ backend/
 │   └── spotify.py
 ├── nlp/                   # NLP utilities
 └── tests/
-    └── test_backend_features.py
+    └── test_flaskapp_features.py
 ```
 
 ---

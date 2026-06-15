@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "filename": "./backend/",
+      "filename": "./flaskapp/",
       "reason": "No such file or directory"
     }
   ],

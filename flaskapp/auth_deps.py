@@ -12,8 +12,8 @@ from typing import Optional
 logger = logging.getLogger(__name__)
 
 # Ensure FIREBASE_* env vars are available regardless of working directory
-BACKEND_ENV_PATH = Path(__file__).resolve().parent / ".env"
-load_dotenv(dotenv_path=BACKEND_ENV_PATH)
+flaskapp_ENV_PATH = Path(__file__).resolve().parent / ".env"
+load_dotenv(dotenv_path=flaskapp_ENV_PATH)
 load_dotenv()
 
 

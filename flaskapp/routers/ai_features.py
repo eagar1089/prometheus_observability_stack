@@ -4,8 +4,8 @@ from typing import Iterable
 
 from fastapi import APIRouter, Depends
 
-from backend import crud, schemas
-from backend.auth_deps import verify_firebase_token
+from flaskapp import crud, schemas
+from flaskapp.auth_deps import verify_firebase_token
 
 router = APIRouter()
 

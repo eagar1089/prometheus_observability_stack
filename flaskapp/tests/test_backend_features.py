@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from backend import nlp_processor
-from backend.routers import ai_features, spotify
-from backend.schemas import SpotifySuggestRequest
+from flaskapp import nlp_processor
+from flaskapp.routers import ai_features, spotify
+from flaskapp.schemas import SpotifySuggestRequest
 
 
 def test_bucketize_emotions_normalizes_alias_labels():

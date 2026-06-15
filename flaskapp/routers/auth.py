@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from backend.auth_deps import verify_firebase_token
+from flaskapp.auth_deps import verify_firebase_token
 
 router = APIRouter()
 

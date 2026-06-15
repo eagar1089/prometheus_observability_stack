@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
-from backend.routers import test # test router
+from flaskapp.routers import test # test router
 
 import json as _json
 import importlib
@@ -19,13 +19,13 @@ from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, Histogram, ge
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
 load_dotenv()
 
-auth = importlib.import_module("backend.routers.auth")
-memories = importlib.import_module("backend.routers.memories")
-dashboard = importlib.import_module("backend.routers.dashboard")
-spotify = importlib.import_module("backend.routers.spotify")
-ai_features = importlib.import_module("backend.routers.ai_features")
+auth = importlib.import_module("flaskapp.routers.auth")
+memories = importlib.import_module("flaskapp.routers.memories")
+dashboard = importlib.import_module("flaskapp.routers.dashboard")
+spotify = importlib.import_module("flaskapp.routers.spotify")
+ai_features = importlib.import_module("flaskapp.routers.ai_features")
 
-_nlp_processor = importlib.import_module("backend.nlp_processor")
+_nlp_processor = importlib.import_module("flaskapp.nlp_processor")
 process_unprocessed_memories = _nlp_processor.process_unprocessed_memories
 _hf_inference_endpoints = _nlp_processor._hf_inference_endpoints
 _get_hf_emotion_model_id = _nlp_processor._get_hf_emotion_model_id
@@ -35,11 +35,11 @@ _get_hf_timeout_seconds = _nlp_processor._get_hf_timeout_seconds
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="DMJ Backend")
+app = FastAPI(title="DMJ flaskapp")
 
 HTTP_REQUESTS_TOTAL = Counter(
     "dmj_http_requests_total",
-    "Total HTTP requests handled by the backend",
+    "Total HTTP requests handled by the flaskapp",
     ["method", "path", "status"],
 )
 
@@ -168,7 +168,7 @@ def model_health():
 @app.get("/")
 def root():
     return {
-        "service": "DMJ Backend",
+        "service": "DMJ flaskapp",
         "status": "ok",
         "health": "/healthz",
         "docs": "/docs",

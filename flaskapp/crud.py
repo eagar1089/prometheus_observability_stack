@@ -2,7 +2,7 @@ from typing import List, Optional
 from datetime import datetime
 from bson.objectid import ObjectId
 
-from backend.connection import get_collection
+from flaskapp.connection import get_collection
 
 
 def _safe_round(value, digits: int = 3) -> float:

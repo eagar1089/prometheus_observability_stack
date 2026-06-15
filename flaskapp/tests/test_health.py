@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 import sys
 import os
 
-# Add the backend directory to Python's module search path
+# Add the flaskapp directory to Python's module search path
 # so we can import main.py
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

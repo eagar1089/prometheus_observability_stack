@@ -16,9 +16,9 @@ import os
 import math
 from urllib import error, request
 
-from backend.connection import get_collection
-from backend.crud import update_memory_with_nlp
-from backend.text_preprocessor import TextPreprocessor, preprocess_unprocessed_memories
+from flaskapp.connection import get_collection
+from flaskapp.crud import update_memory_with_nlp
+from flaskapp.text_preprocessor import TextPreprocessor, preprocess_unprocessed_memories
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

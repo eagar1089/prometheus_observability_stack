@@ -95,7 +95,7 @@ def bulk_insert_memories(
             print(f"  Retrying in {wait_seconds}s...")
             time.sleep(wait_seconds)
     
-    # Use explicit DB/collection so inserts match backend reads.
+    # Use explicit DB/collection so inserts match flaskapp reads.
     db = client[db_name]
     collection = db[collection_name]
     

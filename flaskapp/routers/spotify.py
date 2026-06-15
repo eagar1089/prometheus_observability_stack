@@ -7,8 +7,8 @@ from urllib.request import Request, urlopen
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from backend import schemas
-from backend.auth_deps import verify_firebase_token_optional
+from flaskapp import schemas
+from flaskapp.auth_deps import verify_firebase_token_optional
 
 router = APIRouter()
 

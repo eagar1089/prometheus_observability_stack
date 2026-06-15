@@ -3,9 +3,9 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from backend import crud, schemas
-from backend.auth_deps import verify_firebase_token
-from backend.nlp_processor import extract_emotion_scores, extract_keywords, categorize_topics, dominant_mood_from_scores
+from flaskapp import crud, schemas
+from flaskapp.auth_deps import verify_firebase_token
+from flaskapp.nlp_processor import extract_emotion_scores, extract_keywords, categorize_topics, dominant_mood_from_scores
 
 
 router = APIRouter()

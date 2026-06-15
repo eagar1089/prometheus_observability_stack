@@ -25,7 +25,7 @@ except ImportError:
     logging.info("spaCy not installed - using lightweight regex-based preprocessing")
     Language = None
 
-from backend.connection import get_collection
+from flaskapp.connection import get_collection
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
