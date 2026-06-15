@@ -1,0 +1,164 @@
+name: CI Pipeline
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+
+# ── Job 1: Lint + Format check ─────────────────────────────────────────────────────
+  code-quality:
+    name: Lint + Format check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run Ruff checks
+        run: ruff check backend/
+        # Checks all .py files in backend/ for style and syntax issues.
+    
+# # ── JOB 2: Tests ─────────────────────────────────────────────────────
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: code-quality
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r backend/requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run tests with coverage
+        run: pytest backend --cov=backend -v --cov-report=term --cov-report=xml
+        env:
+          PYTHONPATH: .
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          HF_API_TOKEN: ${{ secrets.HF_TOKEN }}
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: backend/coverage.xml
+          flags: unittests
+          name: coverage-report
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+# # ── JOB 3: Security — SAST ────────────────────────────────────────────
+  sast-scan:
+    name: Bandit SAST scan
+    runs-on: ubuntu-latest
+    needs: code-quality
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Bandit
+        run: pip install bandit[toml]
+      - name: Run Bandit security scan
+        run: bandit -r backend/ -x backend/tests --severity-level medium -f json -o bandit-report.json || true
+
+      - name: Show Bandit summary
+        run: bandit -r backend/ -x backend/tests --severity-level medium || true
+
+      - name: Upload Bandit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-security-report
+          path: bandit-report.json
+
+#  # JOB 4: Dependency scan
+  dependency-scan:
+    name: pip-audit Dependency Scan
+    runs-on: ubuntu-latest
+    needs: code-quality
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Run pip-audit
+        run: pip-audit -r backend/requirements.txt -f json -o pip-audit-report.json || true
+
+      - name: Show pip-audit summary
+        run: pip-audit -r backend/requirements.txt || true
+
+      - name: Upload pip-audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-audit-report
+          path: pip-audit-report.json
+
+  # # ── JOB 5: Docker build + Trivy image scan
+  docker-scan:
+    name: Docker Build + Trivy Scan
+    runs-on: ubuntu-latest
+    needs: ["tests","dependency-scan","sast-scan"]
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: memoryjar-backend:${{ github.sha }}
+          load: true
+
+      - name: Run Trivy scan (SARIF)
+        uses: aquasecurity/trivy-action@v0.20.0
+        with:
+          image-ref: memoryjar-backend:${{ github.sha }}
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+
+      - name: Upload SARIF to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-results.sarif
